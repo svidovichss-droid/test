@@ -38,6 +38,9 @@ const standardNotificationContainer = document.getElementById('standardNotificat
 const dataStatus = document.getElementById('dataStatus');
 const offlineStatus = document.getElementById('offlineStatus');
 const calculateButton = document.getElementById('calculateButton');
+const refreshButton = document.getElementById('refreshButton');
+const lastUpdateInfo = document.getElementById('lastUpdateInfo');
+const lastUpdateTime = document.getElementById('lastUpdateTime');
 
 // Регистрация Service Worker
 function registerServiceWorker() {
@@ -94,7 +97,8 @@ const cacheUtils = {
             const cacheData = {
                 timestamp: Date.now(),
                 data: data,
-                etag: etag
+                etag: etag,
+                lastUpdate: new Date().toLocaleString('ru-RU')
             };
             localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify(cacheData));
             console.log('Данные сохранены в кэш');
@@ -102,6 +106,9 @@ const cacheUtils = {
             if (etag) {
                 localStorage.setItem(CONFIG.ETAG_KEY, etag);
             }
+            
+            // Обновляем информацию о последнем обновлении
+            updateLastUpdateInfo(cacheData.lastUpdate);
         } catch (error) {
             console.error('Ошибка сохранения в кэш:', error);
         }
@@ -116,10 +123,16 @@ const cacheUtils = {
             const cacheData = JSON.parse(cached);
             const isExpired = Date.now() - cacheData.timestamp > CONFIG.CACHE_EXPIRY;
 
+            // Показываем информацию о последнем обновлении
+            if (cacheData.lastUpdate) {
+                updateLastUpdateInfo(cacheData.lastUpdate);
+            }
+
             return {
                 data: cacheData.data,
                 etag: cacheData.etag,
-                isExpired: isExpired
+                isExpired: isExpired,
+                lastUpdate: cacheData.lastUpdate
             };
         } catch (error) {
             console.error('Ошибка чтения из кэша:', error);
@@ -143,6 +156,7 @@ const cacheUtils = {
             localStorage.removeItem(CONFIG.CACHE_KEY);
             localStorage.removeItem(CONFIG.ETAG_KEY);
             console.log('Кэш очищен');
+            hideLastUpdateInfo();
         } catch (error) {
             console.error('Ошибка очистки кэша:', error);
         }
@@ -154,15 +168,49 @@ const cacheUtils = {
             const cacheData = {
                 timestamp: Date.now(),
                 data: CONFIG.FALLBACK_DATA,
-                etag: 'fallback'
+                etag: 'fallback',
+                lastUpdate: new Date().toLocaleString('ru-RU') + ' (офлайн)'
             };
             localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify(cacheData));
             console.log('Fallback данные сохранены в кэш');
+            
+            updateLastUpdateInfo(cacheData.lastUpdate);
         } catch (error) {
             console.error('Ошибка сохранения fallback данных:', error);
         }
     }
 };
+
+// Обновить информацию о последнем обновлении
+function updateLastUpdateInfo(timeString) {
+    if (lastUpdateInfo && lastUpdateTime) {
+        lastUpdateTime.textContent = timeString;
+        lastUpdateInfo.classList.remove('hidden');
+    }
+}
+
+// Скрыть информацию о последнем обновлении
+function hideLastUpdateInfo() {
+    if (lastUpdateInfo) {
+        lastUpdateInfo.classList.add('hidden');
+    }
+}
+
+// Показать анимацию загрузки на кнопке обновления
+function showRefreshLoading() {
+    if (refreshButton) {
+        refreshButton.classList.add('refreshing');
+        refreshButton.disabled = true;
+    }
+}
+
+// Скрыть анимацию загрузки на кнопке обновления
+function hideRefreshLoading() {
+    if (refreshButton) {
+        refreshButton.classList.remove('refreshing');
+        refreshButton.disabled = false;
+    }
+}
 
 // Проверка обновлений на сервере
 async function checkForUpdates(cachedEtag) {
@@ -348,12 +396,27 @@ function activateInputFields() {
 // Принудительное обновление данных
 async function forceRefreshData() {
     console.log('Принудительное обновление данных');
+    
     if (!checkOnlineStatus()) {
         showNotification('Нет подключения к интернету. Обновление невозможно.', 'error');
         return;
     }
-    cacheUtils.clearCache();
-    await loadProductsData();
+    
+    // Показываем анимацию загрузки
+    showRefreshLoading();
+    
+    try {
+        // Очищаем кэш и загружаем заново
+        cacheUtils.clearCache();
+        await loadProductsData();
+        showNotification('Данные успешно обновлены', 'success');
+    } catch (error) {
+        console.error('Ошибка при обновлении данных:', error);
+        showNotification('Ошибка при обновлении данных', 'error');
+    } finally {
+        // Скрываем анимацию загрузки
+        hideRefreshLoading();
+    }
 }
 
 // Поиск продуктов

@@ -1,21 +1,21 @@
 /* Jekyll Architect Theme Styles - Light Theme */
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
     --accent-color: #e74c3c;
-    --light-color: #ecf0f1;
+    --light-color: #ffffff;
     --dark-color: #2c3e50;
-    --text-color: #333;
-    --border-color: #ddd;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --text-color: #2c3e50;
+    --border-color: #e1e8ed;
+    --shadow-color: rgba(0, 0, 0, 0.08);
     --success-color: #27ae60;
     --warning-color: #f39c12;
     --error-color: #e74c3c;
     --info-color: #3498db;
-    --background-color: #f9f9f9;
+    --background-color: #f8fafc;
     --card-background: #ffffff;
-    --header-background: #2c3e50;
-    --footer-background: #2c3e50;
+    --header-background: #1a1a2e;
+    --footer-background: #1a1a2e;
     --header-text-color: #ffffff;
     --footer-text-color: #ffffff;
 }
@@ -52,14 +52,14 @@ body {
     flex: 1;
 }
 
-/* Header styles - ТЁМНАЯ ШАПКА (как в index1) */
+/* Header styles - ТЁМНАЯ ШАПКА (ИСПРАВЛЕНА) */
 .header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--header-background) 0%, #16213e 100%);
+    color: var(--header-text-color);
     padding: 2rem 0;
-    box-shadow: 0 4px 6px var(--shadow-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Изменено с hidden на visible */
     border-bottom: none;
     width: 100%;
     margin: 0;
@@ -72,10 +72,10 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,138.7C1248,139,1344,117,1392,106.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%233498db' fill-opacity='0.1' d='M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,138.7C1248,139,1344,117,1392,106.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
     background-size: cover;
     background-position: center;
-    opacity: 0.1;
+    opacity: 0.3;
 }
 
 .header-content {
@@ -111,7 +111,10 @@ body {
 .logo div:first-child {
     font-size: 1.8rem;
     font-weight: 700;
-    color: white;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 0.25rem;
 }
 
@@ -136,20 +139,21 @@ body {
 /* Card styles */
 .card {
     background: var(--card-background);
-    border-radius: 8px;
-    box-shadow: 0 4px 6px var(--shadow-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow-color);
     overflow: hidden;
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
     margin-bottom: 2rem;
     border: 1px solid var(--border-color);
 }
 
 .card:hover {
-    box-shadow: 0 10px 20px var(--shadow-color);
+    box-shadow: 0 8px 25px var(--shadow-color);
+    transform: translateY(-2px);
 }
 
 .card-header {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
@@ -164,7 +168,7 @@ input, select, textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     font-family: inherit;
@@ -174,8 +178,8 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 input[readonly] {
@@ -200,12 +204,12 @@ input:disabled {
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px var(--shadow-color);
     text-decoration: none;
@@ -213,8 +217,8 @@ input:disabled {
 }
 
 .btn:hover {
-    background-color: #2980b9;
-    box-shadow: 0 4px 8px var(--shadow-color);
+    background-color: var(--secondary-color);
+    box-shadow: 0 4px 12px var(--shadow-color);
     transform: translateY(-1px);
 }
 
@@ -231,11 +235,11 @@ input:disabled {
 }
 
 .btn-primary {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background-color: var(--secondary-color);
 }
 
 .btn-success {
@@ -429,7 +433,7 @@ input:disabled {
     width: 20px;
     height: 20px;
     border: 2px solid #f3f3f3;
-    border-top: 2px solid var(--secondary-color);
+    border-top: 2px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-right: 10px;
@@ -440,16 +444,17 @@ input:disabled {
     100% { transform: rotate(360deg); }
 }
 
-/* Footer - ТЁМНЫЙ ПОДВАЛ (как в index1) */
+/* Footer - ТЁМНЫЙ ПОДВАЛ */
 .footer {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1.5rem 0;
+    background: linear-gradient(135deg, var(--footer-background) 0%, #16213e 100%);
+    color: var(--footer-text-color);
+    padding: 2rem 0;
     text-align: center;
     margin-top: auto;
     border-top: none;
     width: 100%;
     flex-shrink: 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .footer p {
@@ -462,7 +467,7 @@ input:disabled {
 }
 
 .footer a:hover {
-    color: var(--secondary-color);
+    color: var(--primary-color);
 }
 
 /* Остальные стили остаются без изменений... */

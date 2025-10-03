@@ -38,7 +38,7 @@ const standardNotificationContainer = document.getElementById('standardNotificat
 const dataStatus = document.getElementById('dataStatus');
 const offlineStatus = document.getElementById('offlineStatus');
 const calculateButton = document.getElementById('calculateButton');
-const refreshButton = document.getElementById('refreshButton');
+const refreshFooterButton = document.getElementById('refreshFooterButton');
 const lastUpdateInfo = document.getElementById('lastUpdateInfo');
 const lastUpdateTime = document.getElementById('lastUpdateTime');
 
@@ -196,19 +196,19 @@ function hideLastUpdateInfo() {
     }
 }
 
-// Показать анимацию загрузки на кнопке обновления
+// Показать анимацию загрузки на кнопке обновления в футере
 function showRefreshLoading() {
-    if (refreshButton) {
-        refreshButton.classList.add('refreshing');
-        refreshButton.disabled = true;
+    if (refreshFooterButton) {
+        refreshFooterButton.classList.add('refreshing');
+        refreshFooterButton.disabled = true;
     }
 }
 
-// Скрыть анимацию загрузки на кнопке обновления
+// Скрыть анимацию загрузки на кнопке обновления в футере
 function hideRefreshLoading() {
-    if (refreshButton) {
-        refreshButton.classList.remove('refreshing');
-        refreshButton.disabled = false;
+    if (refreshFooterButton) {
+        refreshFooterButton.classList.remove('refreshing');
+        refreshFooterButton.disabled = false;
     }
 }
 

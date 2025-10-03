@@ -39,13 +39,49 @@ const dataStatus = document.getElementById('dataStatus');
 const offlineStatus = document.getElementById('offlineStatus');
 const calculateButton = document.getElementById('calculateButton');
 
+// Регистрация Service Worker
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker зарегистрирован успешно:', registration.scope);
+                
+                // Проверяем наличие обновлений Service Worker
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    console.log('Обнаружено обновление Service Worker');
+                    
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            console.log('Новая версия Service Worker установлена');
+                            showNotification('Доступно обновление приложения. Перезагрузите страницу.', 'info');
+                        }
+                    });
+                });
+            })
+            .catch(function(error) {
+                console.log('Ошибка регистрации Service Worker:', error);
+            });
+
+        // Отслеживаем изменения Service Worker
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Service Worker контроллер изменился');
+            window.location.reload();
+        });
+    }
+}
+
 // Проверка онлайн статуса
 function checkOnlineStatus() {
     isOnline = navigator.onLine;
     if (!isOnline && offlineStatus) {
         offlineStatus.classList.remove('hidden');
+        showNotification('Работаем в автономном режиме', 'warning');
     } else if (offlineStatus) {
         offlineStatus.classList.add('hidden');
+        if (isOnline) {
+            showNotification('Подключение к интернету восстановлено', 'success');
+        }
     }
     return isOnline;
 }
@@ -509,14 +545,16 @@ function showNotification(message, type) {
     const notification = document.createElement('div');
     notification.className = `notification-message fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 transition-all duration-300 transform translate-x-0 opacity-100 ${
         type === 'success' ? 'bg-green-500' : 
-        type === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
+        type === 'warning' ? 'bg-yellow-500' : 
+        type === 'info' ? 'bg-blue-500' : 'bg-red-500'
     }`;
     notification.setAttribute('aria-live', 'assertive');
     notification.innerHTML = `
     <div class="flex items-center">
       <i class="fas ${
           type === 'success' ? 'fa-check-circle' : 
-          type === 'warning' ? 'fa-exclamation-triangle' : 'fa-exclamation-circle'
+          type === 'warning' ? 'fa-exclamation-triangle' : 
+          type === 'info' ? 'fa-info-circle' : 'fa-exclamation-circle'
       } mr-2"></i>
       ${message}
     </div>
@@ -531,6 +569,7 @@ function showNotification(message, type) {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
+    // Устанавливаем сегодняшнюю дату по умолчанию
     const productionDateElem = document.getElementById('productionDate');
     if (productionDateElem) {
         const today = new Date();
@@ -541,17 +580,22 @@ document.addEventListener('DOMContentLoaded', () => {
         productionDateElem.value = `${year}-${month}-${day}`;
     }
     
+    // Регистрируем Service Worker
+    registerServiceWorker();
+    
     // Слушатели событий онлайн/оффлайн
     window.addEventListener('online', () => {
         console.log('Онлайн статус: онлайн');
         checkOnlineStatus();
-        showNotification('Подключение к интернету восстановлено', 'success');
+        // Автоматически обновляем данные при восстановлении соединения
+        setTimeout(() => {
+            loadProductsData();
+        }, 1000);
     });
     
     window.addEventListener('offline', () => {
         console.log('Онлайн статус: оффлайн');
         checkOnlineStatus();
-        showNotification('Потеряно подключение к интернету. Работаем автономно.', 'warning');
     });
     
     // Загружаем данные о продуктах

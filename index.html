@@ -4,10 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор срока годности</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="description" content="Приложение для расчета срока годности продукции">
+    <meta name="theme-color" content="#3498db">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+    
+    <!-- CSS Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Калькулятор срока">
+    <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
 <div class="header">
@@ -174,16 +192,29 @@
                 >
             </div>
 
-            <!-- Calculate button -->
-            <button
-               onclick="calculateExpiry()"
-               class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
-               aria-label="Рассчитать срок годности"
-               id="calculateButton"
-               disabled
-            >
-                <i class="fas fa-calculator mr-2"></i> Рассчитать срок годности
-            </button>
+            <!-- Action buttons -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- Calculate button -->
+                <button
+                   onclick="calculateExpiry()"
+                   class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
+                   aria-label="Рассчитать срок годности"
+                   id="calculateButton"
+                   disabled
+                >
+                    <i class="fas fa-calculator mr-2"></i> Рассчитать срок годности
+                </button>
+
+                <!-- Refresh data button -->
+                <button
+                   onclick="forceRefreshData()"
+                   class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
+                   aria-label="Обновить данные"
+                   id="refreshButton"
+                >
+                    <i class="fas fa-sync-alt mr-2"></i> Обновить данные
+                </button>
+            </div>
 
             <!-- Result -->
             <div id="result" class="mt-4 p-5 bg-blue-50 border border-blue-200 rounded-lg hidden fade-in" aria-live="polite">
@@ -199,6 +230,17 @@
                     </div>
                 </div>
             </div>
+
+            <!-- PWA Installation hint -->
+            <div id="pwaInstallHint" class="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg hidden">
+                <div class="flex items-center">
+                    <i class="fas fa-mobile-alt text-purple-600 mr-3 text-xl"></i>
+                    <div>
+                        <p class="text-purple-800 font-medium">Установите приложение на устройство</p>
+                        <p class="text-purple-600 text-sm">Для быстрого доступа в офлайн-режиме</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -207,12 +249,15 @@
 <div class="footer">
     <div class="container">
         <p>
-            © 2025 Калькулятор срока годности | Версия 2.4 beta <i class="fas fa-heart text-red-500 mx-1"></i> <i class="fas fa-code-branch text-blue-500 mx-1"></i> (made in Quality service)
+            © 2025 Калькулятор срока годности | Версия 2.5 PWA <i class="fas fa-heart text-red-500 mx-1"></i> <i class="fas fa-code-branch text-blue-500 mx-1"></i> (made in Quality service)
         </p>
-        <div class="mt-2">
+        <div class="mt-2 flex justify-center space-x-4">
             <a href="mailto:asvidovich@progressfood.com" class="inline-block text-gray-300 hover:text-white transition-colors" aria-label="Обратная связь">
                 <i class="fas fa-envelope text-lg"></i>
             </a>
+            <button onclick="forceRefreshData()" class="text-gray-300 hover:text-white transition-colors" aria-label="Обновить приложение">
+                <i class="fas fa-sync-alt text-lg"></i>
+            </button>
         </div>
     </div>
 </div>

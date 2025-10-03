@@ -14,7 +14,10 @@
     --info-color: #3498db;
     --background-color: #f8fafc;
     --card-background: #ffffff;
-    --header-background: #ffffff;
+    --header-background: #1a1a2e; /* Тёмный цвет для шапки */
+    --footer-background: #1a1a2e; /* Тёмный цвет для подвала */
+    --header-text-color: #ffffff; /* Белый текст для шапки */
+    --footer-text-color: #ffffff; /* Белый текст для подвала */
 }
 
 * {
@@ -45,15 +48,15 @@ body {
     flex: 1; /* Заставляет контейнер занимать всё доступное пространство */
 }
 
-/* Header styles */
+/* Header styles - ТЁМНАЯ ШАПКА */
 .header {
-    background: var(--header-background);
-    color: var(--text-color);
+    background: linear-gradient(135deg, var(--header-background) 0%, #16213e 100%);
+    color: var(--header-text-color);
     padding: 2rem 0;
-    box-shadow: 0 2px 10px var(--shadow-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: none;
 }
 
 .header::before {
@@ -63,15 +66,43 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%233498db' fill-opacity='0.03' d='M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,138.7C1248,139,1344,117,1392,106.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%233498db' fill-opacity='0.1' d='M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,138.7C1248,139,1344,117,1392,106.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
     background-size: cover;
     background-position: center;
-    opacity: 0.6;
+    opacity: 0.3;
 }
 
 .header-content {
     position: relative;
     z-index: 1;
+}
+
+.header h1 {
+    color: var(--header-text-color);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.logo {
+    color: var(--header-text-color);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logo div:first-child {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo div:last-child {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
 }
 
 /* Card styles */
@@ -382,16 +413,30 @@ input:disabled {
     100% { transform: rotate(360deg); }
 }
 
-/* Footer - ОСНОВНЫЕ ИЗМЕНЕНИЯ */
+/* Footer - ТЁМНЫЙ ПОДВАЛ */
 .footer {
-    background: var(--header-background);
-    color: var(--text-color);
+    background: linear-gradient(135deg, var(--footer-background) 0%, #16213e 100%);
+    color: var(--footer-text-color);
     padding: 2rem 0;
     text-align: center;
     margin-top: auto; /* Это прижимает подвал к низу */
-    border-top: 1px solid var(--border-color);
+    border-top: none;
     width: 100%;
     flex-shrink: 0; /* Предотвращает сжатие подвала */
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.footer p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.footer a {
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
 }
 
 /* Стили для элементов в выпадающем списке */
@@ -525,9 +570,9 @@ input:disabled {
 
 /* Footer refresh button styles */
 .refresh-footer-btn {
-    background: none;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
     cursor: pointer;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
@@ -536,13 +581,14 @@ input:disabled {
     display: flex;
     align-items: center;
     font-family: inherit;
-    background-color: var(--light-color);
+    backdrop-filter: blur(10px);
 }
 
 .refresh-footer-btn:hover {
     color: var(--primary-color);
-    background: rgba(52, 152, 219, 0.1);
+    background: rgba(52, 152, 219, 0.2);
     border-color: var(--primary-color);
+    transform: translateY(-1px);
 }
 
 .refresh-footer-btn:active {
@@ -894,7 +940,10 @@ input:disabled {
         --shadow-color: rgba(0, 0, 0, 0.3);
         --background-color: #1a1a1a;
         --card-background: #2c3e50;
-        --header-background: #2c3e50;
+        --header-background: #0f3460;
+        --footer-background: #0f3460;
+        --header-text-color: #ffffff;
+        --footer-text-color: #ffffff;
     }
     
     body {

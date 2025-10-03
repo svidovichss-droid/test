@@ -47,11 +47,6 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Smooth transitions for all interactive elements */
-button, input, select {
-    transition: all 0.2s ease-in-out;
-}
-
 /* Focus states for accessibility */
 .refresh-footer-btn:focus {
     outline: 2px solid rgba(255, 255, 255, 0.5);

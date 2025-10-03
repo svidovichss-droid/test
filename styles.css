@@ -1,50 +1,44 @@
-/* Small refresh button styles */
-.refresh-btn {
-    width: 32px;
-    height: 32px;
+/* Footer refresh button styles */
+.refresh-footer-btn {
+    background: none;
     border: none;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    color: #d1d5db;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
     transition: all 0.3s ease;
     font-size: 0.875rem;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
 }
 
-.refresh-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
+.refresh-footer-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.refresh-btn:active {
+.refresh-footer-btn:active {
     transform: scale(0.95);
 }
 
-.refresh-btn:disabled {
+.refresh-footer-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
 }
 
-.refresh-btn.refreshing {
+.refresh-footer-btn.refreshing {
     animation: spin 1s linear infinite;
 }
 
-/* Last update info styles */
-.last-update-info {
-    font-size: 0.75rem;
-    color: #6b7280;
-    text-align: center;
-    margin-top: 1rem;
-    padding: 0.5rem;
-    background: #f9fafb;
-    border-radius: 4px;
-    border: 1px solid #e5e7eb;
+/* Footer layout improvements */
+.footer .container {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.footer .flex {
+    gap: 0.5rem;
 }
 
 /* Enhanced button animations */
@@ -59,33 +53,54 @@ button, input, select {
 }
 
 /* Focus states for accessibility */
-.refresh-btn:focus {
+.refresh-footer-btn:focus {
     outline: 2px solid rgba(255, 255, 255, 0.5);
     outline-offset: 2px;
 }
 
-/* Dark mode support for refresh button */
-@media (prefers-color-scheme: dark) {
-    .refresh-btn {
-        background: rgba(255, 255, 255, 0.1);
+/* Mobile responsiveness for footer */
+@media (max-width: 768px) {
+    .footer .flex {
+        flex-direction: column;
+        gap: 0.75rem;
     }
     
-    .refresh-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
+    .footer .flex.space-x-4 {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .footer .text-sm {
+        font-size: 0.8rem;
+    }
+}
+
+/* Last update info styles */
+.last-update-info {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background: #f9fafb;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .refresh-footer-btn {
+        color: #9ca3af;
+    }
+    
+    .refresh-footer-btn:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
     }
     
     .last-update-info {
         background: #374151;
         border-color: #4b5563;
         color: #d1d5db;
-    }
-}
-
-/* Mobile responsiveness for small buttons */
-@media (max-width: 768px) {
-    .refresh-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
     }
 }

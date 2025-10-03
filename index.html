@@ -50,7 +50,18 @@
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
-            <h2 class="text-xl font-bold">Расчет срока годности</h2>
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold">Расчет срока годности</h2>
+                <button
+                    onclick="forceRefreshData()"
+                    class="refresh-btn"
+                    id="refreshButton"
+                    title="Обновить данные о продуктах"
+                    aria-label="Обновить данные"
+                >
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <!-- Data loading status -->
@@ -192,29 +203,16 @@
                 >
             </div>
 
-            <!-- Action buttons -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <!-- Calculate button -->
-                <button
-                   onclick="calculateExpiry()"
-                   class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
-                   aria-label="Рассчитать срок годности"
-                   id="calculateButton"
-                   disabled
-                >
-                    <i class="fas fa-calculator mr-2"></i> Рассчитать срок годности
-                </button>
-
-                <!-- Refresh data button -->
-                <button
-                   onclick="forceRefreshData()"
-                   class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
-                   aria-label="Обновить данные"
-                   id="refreshButton"
-                >
-                    <i class="fas fa-sync-alt mr-2"></i> Обновить данные
-                </button>
-            </div>
+            <!-- Calculate button -->
+            <button
+               onclick="calculateExpiry()"
+               class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
+               aria-label="Рассчитать срок годности"
+               id="calculateButton"
+               disabled
+            >
+                <i class="fas fa-calculator mr-2"></i> Рассчитать срок годности
+            </button>
 
             <!-- Result -->
             <div id="result" class="mt-4 p-5 bg-blue-50 border border-blue-200 rounded-lg hidden fade-in" aria-live="polite">
@@ -231,15 +229,9 @@
                 </div>
             </div>
 
-            <!-- PWA Installation hint -->
-            <div id="pwaInstallHint" class="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg hidden">
-                <div class="flex items-center">
-                    <i class="fas fa-mobile-alt text-purple-600 mr-3 text-xl"></i>
-                    <div>
-                        <p class="text-purple-800 font-medium">Установите приложение на устройство</p>
-                        <p class="text-purple-600 text-sm">Для быстрого доступа в офлайн-режиме</p>
-                    </div>
-                </div>
+            <!-- Last update info -->
+            <div id="lastUpdateInfo" class="mt-4 text-xs text-gray-500 text-center hidden">
+                Данные обновлены: <span id="lastUpdateTime"></span>
             </div>
         </div>
     </div>
@@ -255,9 +247,6 @@
             <a href="mailto:asvidovich@progressfood.com" class="inline-block text-gray-300 hover:text-white transition-colors" aria-label="Обратная связь">
                 <i class="fas fa-envelope text-lg"></i>
             </a>
-            <button onclick="forceRefreshData()" class="text-gray-300 hover:text-white transition-colors" aria-label="Обновить приложение">
-                <i class="fas fa-sync-alt text-lg"></i>
-            </button>
         </div>
     </div>
 </div>

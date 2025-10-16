@@ -38,6 +38,7 @@ const standardNotificationContainer = document.getElementById('standardNotificat
 const dataStatus = document.getElementById('dataStatus');
 const offlineStatus = document.getElementById('offlineStatus');
 const calculateButton = document.getElementById('calculateButton');
+const printButton = document.getElementById('printButton');
 const refreshFooterButton = document.getElementById('refreshFooterButton');
 const lastUpdateInfo = document.getElementById('lastUpdateInfo');
 const lastUpdateTime = document.getElementById('lastUpdateTime');
@@ -391,6 +392,7 @@ function processProductsData(productsData) {
 function activateInputFields() {
     if (productSearch) productSearch.disabled = false;
     if (calculateButton) calculateButton.disabled = false;
+    if (printButton) printButton.disabled = false;
 }
 
 // Принудительное обновление данных
@@ -600,6 +602,175 @@ function calculateExpiry() {
     }, 100);
 }
 
+// Печать результатов
+function printResults() {
+    const productCode = document.getElementById('productCode').value;
+    const productName = document.getElementById('productName').value;
+    const shelfLife = document.getElementById('shelfLife').value;
+    const quantityPerPack = document.getElementById('quantityPerPack').value;
+    const groupBarcode = document.getElementById('groupBarcode').value;
+    const manufacturerBarcode = document.getElementById('manufacturerBarcode').value;
+    const productionDate = document.getElementById('productionDate').value;
+    const expiryDate = document.getElementById('expiryDate').textContent;
+
+    // Проверяем, есть ли данные для печати
+    if (!productCode || !productName || !expiryDate) {
+        showNotification('Нет данных для печати. Сначала выполните расчет.', 'error');
+        return;
+    }
+
+    // Создаем содержимое для печати
+    const printContent = `
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Расчет срока годности</title>
+            <style>
+                @page {
+                    size: A4 landscape;
+                    margin: 15mm;
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    color: #000;
+                }
+                .print-header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #333;
+                    padding-bottom: 15px;
+                }
+                .print-header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                    color: #2c3e50;
+                }
+                .print-info {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 30px;
+                }
+                .print-info th, .print-info td {
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    text-align: left;
+                }
+                .print-info th {
+                    background-color: #f8f9fa;
+                    font-weight: bold;
+                    width: 30%;
+                }
+                .print-info td {
+                    background-color: #fff;
+                }
+                .print-result {
+                    background-color: #e8f4fd;
+                    border: 2px solid #3498db;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin: 20px 0;
+                    text-align: center;
+                }
+                .print-result h3 {
+                    margin: 0 0 10px 0;
+                    color: #2c3e50;
+                }
+                .print-result .expiry-date {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #e74c3c;
+                }
+                .print-footer {
+                    margin-top: 40px;
+                    text-align: right;
+                    font-size: 12px;
+                    color: #666;
+                    border-top: 1px solid #ddd;
+                    padding-top: 10px;
+                }
+                .company-info {
+                    text-align: center;
+                    margin-bottom: 20px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                }
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="company-info">АО "ПРОГРЕСС"</div>
+            
+            <div class="print-header">
+                <h1>РАСЧЕТ СРОКА ГОДНОСТИ ПРОДУКЦИИ</h1>
+            </div>
+
+            <table class="print-info">
+                <tr>
+                    <th>Код продукции</th>
+                    <td>${productCode}</td>
+                </tr>
+                <tr>
+                    <th>Наименование продукции</th>
+                    <td>${productName}</td>
+                </tr>
+                <tr>
+                    <th>Срок годности</th>
+                    <td>${shelfLife} дней</td>
+                </tr>
+                <tr>
+                    <th>Штук в упаковке</th>
+                    <td>${quantityPerPack || 'Не указано'}</td>
+                </tr>
+                <tr>
+                    <th>Штрихкод упаковки</th>
+                    <td>${groupBarcode || 'Не указано'}</td>
+                </tr>
+                <tr>
+                    <th>Производитель</th>
+                    <td>${manufacturerBarcode || 'Не указано'}</td>
+                </tr>
+                <tr>
+                    <th>Дата производства</th>
+                    <td>${productionDate}</td>
+                </tr>
+            </table>
+
+            <div class="print-result">
+                <h3>Дата окончания срока годности:</h3>
+                <div class="expiry-date">${expiryDate}</div>
+            </div>
+
+            <div class="print-footer">
+                Дата и время печати: ${new Date().toLocaleString('ru-RU')}
+            </div>
+        </body>
+        </html>
+    `;
+
+    // Открываем новое окно для печати
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+
+    // Запускаем печать после загрузки содержимого
+    printWindow.onload = function() {
+        printWindow.print();
+        // Закрываем окно после печати
+        setTimeout(function() {
+            printWindow.close();
+        }, 100);
+    };
+}
+
 // Показать уведомление
 function showNotification(message, type) {
     const existingNotifications = document.querySelectorAll('.notification-message');
@@ -668,3 +839,4 @@ document.addEventListener('DOMContentLoaded', () => {
 // Экспортируем функции для глобального использования
 window.calculateExpiry = calculateExpiry;
 window.forceRefreshData = forceRefreshData;
+window.printResults = printResults;

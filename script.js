@@ -392,7 +392,7 @@ function processProductsData(productsData) {
 function activateInputFields() {
     if (productSearch) productSearch.disabled = false;
     if (calculateButton) calculateButton.disabled = false;
-    if (printButton) printButton.disabled = false;
+    if (printButton) printButton.classList.remove('hidden');
 }
 
 // Принудительное обновление данных
@@ -493,6 +493,11 @@ function clearFields() {
         warningMsg.remove();
         warningMessageAdded = false;
     }
+    
+    // Деактивируем кнопку печати при очистке полей
+    if (printButton) {
+        printButton.disabled = true;
+    }
 }
 
 // Закрытие результатов поиска при клике вне области
@@ -527,6 +532,11 @@ function selectProduct(code) {
 
     if (product["Название стандарта"] && standardNotificationContainer) {
         showStandardNotification("Статус: " + product["Название стандарта"]);
+    }
+    
+    // Активируем кнопку печати при выборе продукта
+    if (printButton) {
+        printButton.disabled = false;
     }
     
     if (!warningMessageAdded) {
@@ -614,8 +624,8 @@ function printResults() {
     const expiryDate = document.getElementById('expiryDate').textContent;
 
     // Проверяем, есть ли данные для печати
-    if (!productCode || !productName || !expiryDate) {
-        showNotification('Нет данных для печати. Сначала выполните расчет.', 'error');
+    if (!productCode || !productName) {
+        showNotification('Нет данных для печати. Сначала выберите продукт.', 'error');
         return;
     }
 
@@ -746,7 +756,7 @@ function printResults() {
 
             <div class="print-result">
                 <h3>Дата окончания срока годности:</h3>
-                <div class="expiry-date">${expiryDate}</div>
+                <div class="expiry-date">${expiryDate || 'Не рассчитано'}</div>
             </div>
 
             <div class="print-footer">

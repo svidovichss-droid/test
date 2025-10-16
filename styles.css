@@ -470,8 +470,6 @@ input:disabled {
     color: var(--primary-color);
 }
 
-/* Остальные стили остаются без изменений... */
-
 /* Responsive design - исправления для мобильных устройств */
 @media (max-width: 768px) {
     .container {

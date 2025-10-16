@@ -194,16 +194,30 @@
                     >
                 </div>
 
-                <!-- Calculate button -->
-                <button
-                   onclick="calculateExpiry()"
-                   class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
-                   aria-label="Рассчитать срок годности"
-                   id="calculateButton"
-                   disabled
-                >
-                    <i class="fas fa-calculator mr-2"></i> Рассчитать срок годности
-                </button>
+                <!-- Action buttons -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Calculate button -->
+                    <button
+                       onclick="calculateExpiry()"
+                       class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
+                       aria-label="Рассчитать срок годности"
+                       id="calculateButton"
+                       disabled
+                    >
+                        <i class="fas fa-calculator mr-2"></i> Рассчитать срок годности
+                    </button>
+
+                    <!-- Print button -->
+                    <button
+                       onclick="printResults()"
+                       class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 shadow-md"
+                       aria-label="Печать результатов"
+                       id="printButton"
+                       disabled
+                    >
+                        <i class="fas fa-print mr-2"></i> Печать результатов
+                    </button>
+                </div>
 
                 <!-- Result -->
                 <div id="result" class="mt-4 p-5 bg-blue-50 border border-blue-200 rounded-lg hidden fade-in" aria-live="polite">

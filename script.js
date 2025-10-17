@@ -1,6 +1,6 @@
 // Конфигурация приложения
 const CONFIG = {
-    JSON_URL: 'https://raw.githubusercontent.com/svidovichss-droid/ProgressSAP.github.io/main/data.json',
+    JSON_URL: './data.json',
     CACHE_KEY: 'products_cache',
     ETAG_KEY: 'products_etag',
     CACHE_EXPIRY: 24 * 60 * 60 * 1000, // 24 часа в миллисекундах
@@ -24,6 +24,20 @@ const CONFIG = {
             "Название стандарта": "ТУ 45678-2021"
         }
     ]
+};
+
+// Конфигурация проверки обновлений
+const UPDATE_CHECK_CONFIG = {
+    CHECK_INTERVAL: 4 * 60 * 60 * 1000, // 4 часа в миллисекундах
+    FILES_TO_CHECK: [
+        'index.html',
+        'script.js', 
+        'styles.css',
+        'service-worker.js',
+        'manifest.json'
+    ],
+    CACHE_KEY: 'app_versions',
+    ENABLED: true
 };
 
 // Глобальные переменные
@@ -811,6 +825,159 @@ function showNotification(message, type) {
     }, 3000);
 }
 
+// Функция для получения хэша файла
+async function getFileHash(filename) {
+    try {
+        const response = await fetch(filename + '?v=' + Date.now(), {
+            method: 'HEAD',
+            cache: 'no-cache'
+        });
+        
+        if (!response.ok) return null;
+        
+        // Используем ETag или Last-Modified как идентификатор версии
+        const etag = response.headers.get('ETag');
+        const lastModified = response.headers.get('Last-Modified');
+        
+        return etag || lastModified || response.headers.get('Content-Length') || Date.now().toString();
+    } catch (error) {
+        console.error('Ошибка при проверке файла:', filename, error);
+        return null;
+    }
+}
+
+// Функция для проверки обновлений приложения
+async function checkForAppUpdates() {
+    if (!UPDATE_CHECK_CONFIG.ENABLED || !isOnline) {
+        console.log('Проверка обновлений пропущена (оффлайн режим или отключена)');
+        return;
+    }
+
+    console.log('Проверка обновлений приложения...');
+    
+    try {
+        const currentVersions = JSON.parse(localStorage.getItem(UPDATE_CHECK_CONFIG.CACHE_KEY) || '{}');
+        const newVersions = {};
+        let hasUpdates = false;
+        let updatedFiles = [];
+
+        // Проверяем каждый файл
+        for (const filename of UPDATE_CHECK_CONFIG.FILES_TO_CHECK) {
+            const fileHash = await getFileHash(filename);
+            
+            if (fileHash) {
+                newVersions[filename] = fileHash;
+                
+                // Сравниваем с предыдущей версией
+                if (currentVersions[filename] && currentVersions[filename] !== fileHash) {
+                    hasUpdates = true;
+                    updatedFiles.push(filename);
+                    console.log(`Обнаружено обновление: ${filename}`);
+                }
+            }
+            
+            // Небольшая задержка между запросами
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        // Сохраняем новые версии
+        localStorage.setItem(UPDATE_CHECK_CONFIG.CACHE_KEY, JSON.stringify(newVersions));
+
+        // Если есть обновления, показываем уведомление
+        if (hasUpdates) {
+            showUpdateNotification(updatedFiles);
+        } else {
+            console.log('Обновлений не обнаружено');
+        }
+
+    } catch (error) {
+        console.error('Ошибка при проверке обновлений:', error);
+    }
+}
+
+// Функция для показа уведомления об обновлении приложения
+function showUpdateNotification(updatedFiles) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-sm update-notification';
+    notification.innerHTML = `
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-sync-alt text-white text-lg"></i>
+            </div>
+            <div class="ml-3 flex-1">
+                <p class="font-medium">Доступно обновление</p>
+                <p class="text-sm opacity-90 mt-1">Приложение было обновлено. Перезагрузите страницу для применения изменений.</p>
+                <div class="flex space-x-2 mt-3">
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                            class="text-sm bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded transition-colors">
+                        Позже
+                    </button>
+                    <button onclick="location.reload()" 
+                            class="text-sm bg-white text-blue-600 hover:bg-gray-100 px-3 py-1 rounded transition-colors font-medium">
+                        Обновить
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Удаляем существующие уведомления об обновлении
+    const existingNotification = document.querySelector('.update-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Автоматически скрыть через 30 секунд
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 30000);
+}
+
+// Функция для принудительной проверки обновлений приложения
+function forceCheckUpdates() {
+    console.log('Принудительная проверка обновлений...');
+    showNotification('Проверяем обновления приложения...', 'info');
+    checkForAppUpdates();
+}
+
+// Инициализация периодической проверки обновлений
+function initUpdateChecker() {
+    if (!UPDATE_CHECK_CONFIG.ENABLED) return;
+    
+    // Первая проверка через 30 секунд после загрузки
+    setTimeout(() => {
+        checkForAppUpdates();
+    }, 30000);
+    
+    // Периодическая проверка каждые 4 часа
+    setInterval(() => {
+        checkForAppUpdates();
+    }, UPDATE_CHECK_CONFIG.CHECK_INTERVAL);
+    
+    // Проверка при возвращении на вкладку
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            // Проверяем обновления при возвращении на вкладку (с задержкой)
+            setTimeout(() => {
+                checkForAppUpdates();
+            }, 2000);
+        }
+    });
+    
+    // Проверка при восстановлении онлайн-статуса
+    window.addEventListener('online', () => {
+        setTimeout(() => {
+            checkForAppUpdates();
+        }, 5000);
+    });
+    
+    console.log('Система проверки обновлений инициализирована');
+}
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     // Устанавливаем сегодняшнюю дату по умолчанию
@@ -844,9 +1011,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Загружаем данные о продуктах
     loadProductsData();
+    
+    // Инициализация проверки обновлений
+    initUpdateChecker();
 });
 
 // Экспортируем функции для глобального использования
 window.calculateExpiry = calculateExpiry;
 window.forceRefreshData = forceRefreshData;
 window.printResults = printResults;
+window.forceCheckUpdates = forceCheckUpdates;
+window.checkForAppUpdates = checkForAppUpdates;

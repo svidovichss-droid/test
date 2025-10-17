@@ -5,9 +5,15 @@ const CACHE_URLS = [
     '/script.js',
     '/styles.css',
     '/manifest.json',
+    '/data.json',
+    '/fallback.json',
     'https://cdn.tailwindcss.com',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-    'https://raw.githubusercontent.com/svidovichss-droid/ProgressSAP.github.io/main/data.json'
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+];
+
+// Контроль версий для автоматического обновления
+const APP_VERSION = '2.5.1';
+const VERSION_KEY = 'app_version';
 ];
 
 // Установка Service Worker
@@ -55,6 +61,12 @@ self.addEventListener('activate', (event) => {
             );
         }).then(() => {
             console.log('Service Worker: Активация завершена');
+            
+            // Сохраняем информацию о версии приложения
+            caches.open(CACHE_NAME).then(cache => {
+                cache.put(new Request('/version'), new Response(APP_VERSION));
+            });
+            
             // Берём под контроль все вкладки сразу
             return self.clients.claim();
         })

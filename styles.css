@@ -646,3 +646,108 @@ input:disabled {
         font-size: 1.1rem;
     }
 }
+
+/* Стили для уведомления об обновлении */
+.update-notification {
+    animation: slideInUp 0.3s ease-out;
+    border-left: 4px solid #2563eb;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.update-notification .fa-sync-alt {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Стили для кнопки проверки обновлений в футере */
+.footer button:hover {
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
+}
+
+.footer button:active {
+    transform: translateY(0);
+}
+
+/* Адаптивность для уведомления об обновлении */
+@media (max-width: 640px) {
+    .update-notification {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+        margin: 0 1rem;
+    }
+    
+    .footer .flex.space-x-4 {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+    
+    .footer .flex.space-x-4 span.text-gray-500 {
+        display: none;
+    }
+}
+
+/* Анимация для кнопки при обновлении */
+.footer button.refreshing i {
+    animation: spin 1s linear infinite;
+}
+
+/* Дополнительные стили для улучшенного UX */
+.update-notification button {
+    transition: all 0.2s ease;
+}
+
+.update-notification button:hover {
+    transform: translateY(-1px);
+}
+
+.update-notification button:active {
+    transform: translateY(0);
+}
+
+/* Индикатор новой версии */
+.version-update-indicator {
+    position: relative;
+}
+
+.version-update-indicator::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+    
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
